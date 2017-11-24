@@ -74,6 +74,9 @@ pip-selfcheck.json
 venv
 .venv
 Pipfile*
+/venv
+/env
+.gitignore
 
 # vimmy stuff
 *.swp
