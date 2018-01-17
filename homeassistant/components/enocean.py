@@ -64,6 +64,11 @@ class EnOceanDongle:
             output |= (j << i * 8)
         return output
 
+    def _send_LRN(self, tmp):
+        """Sends a LRN (TeachIn) packet to the enocean device if the device 
+        is known (id in config) """
+        pass
+
     def callback(self, temp):
         """Handle EnOcean device's callback.
 
@@ -75,6 +80,8 @@ class EnOceanDongle:
             _LOGGER.debug("Received radio packet: %s", temp)
             rxtype = None
             value = None
+            if temp.learn:
+                _LOGGER.debug("LRN packet received: %s", temp)
             if temp.data[6] == 0x30:
                 rxtype = "wallswitch"
                 value = 1
@@ -93,6 +100,8 @@ class EnOceanDongle:
             elif temp.data[0] == 0xa5 and temp.data[1] == 0x02:
                 rxtype = "dimmerstatus"
                 value = temp.data[2]
+
+            # updating the device values
             for device in self.__devices:
                 if rxtype == "wallswitch" and device.stype == "listener":
                     if temp.sender_int == self._combine_hex(device.dev_id):
